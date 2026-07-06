@@ -6,21 +6,11 @@ jobs:
   test-db:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: test_db
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
 
       - name: Execute SQL Script
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -prootpassword test_db -e "CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(50)); INSERT INTO users (name) VALUES ('Alice'), ('Bob'); SELECT * FROM users;"
+          sqlite3 test_db.db "CREATE TABLE users (id INT PRIMARY KEY, name TEXT); INSERT INTO users (name) VALUES ('Alice'), ('Bob'); SELECT * FROM users;"
 
